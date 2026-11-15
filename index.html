@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeJargon · Patient Health Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --emerald: #059669;
+      --emerald-light: #d1fae5;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --rose: #e11d48;
+      --rose-light: #ffe4e6;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #f0f7ff 0%, #f8fafc 400px);
+      color: var(--slate-900);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Modern SaaS Navigation */
+    .nav {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 21px;
+      letter-spacing: -0.5px;
+      color: var(--slate-900);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pill-status {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--emerald);
+      background: var(--emerald-light);
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--emerald);
+      border-radius: 50%;
+    }
+
+    /* Container */
+    .container {
+      max-width: 960px;
+      margin: 32px auto;
+      padding: 0 20px 80px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: var(--primary-light);
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--slate-900);
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: var(--slate-600);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Main Workspace Card */
+    .workspace-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    /* Document Type Selector */
+    .tab-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--slate-100);
+      padding: 6px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--slate-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--slate-900);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Drop / Snap Zone */
+    .drop-surface {
+      border: 2px dashed #cbd5e1;
+      background: #fafafa;
+      border-radius: 14px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 18px;
+    }
+
+    .drop-surface:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .drop-icon-circle {
+      width: 52px;
+      height: 52px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .drop-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--slate-800);
+    }
+
+    .drop-subtitle {
+      font-size: 13px;
+      color: var(--slate-500);
+      margin-top: 4px;
+    }
+
+    #file-input { display: none; }
+
+    .file-badge {
+      display: none;
+      background: #e0f2fe;
+      border: 1px solid #7dd3fc;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0369a1;
+      margin-bottom: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--slate-700);
+      outline: none;
+      resize: vertical;
+      margin-bottom: 16px;
+    }
+    textarea:focus {
+      border-color: var(--primary);
+    }
+
+    /* Target Language Selector */
+    .options-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .lang-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--slate-600);
+    }
+
+    .lang-dropdown {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--slate-200);
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--slate-800);
+      outline: none;
+    }
+
+    .btn-analyze {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+      transition: all 0.2s;
+    }
+    .btn-analyze:hover {
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Loader */
+    .loader-box {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--slate-200);
+      margin-bottom: 24px;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #e2e8f0;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Results */
+    #results-area { display: none; }
+
+    .result-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.06);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .section-headline {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Audio Speaker Button */
+    .btn-speech {
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      color: var(--slate-700);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-speech:hover {
+      background: var(--slate-200);
+    }
+
+    /* Prescription Schedule Card Grid */
+    .meds-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .med-item {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .med-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .med-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .med-dosage {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .schedule-tag {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-800);
+      background: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin: 8px 0;
+    }
+
+    .med-purpose {
+      font-size: 13px;
+      color: var(--slate-600);
+      margin-bottom: 8px;
+    }
+
+    .med-warning {
+      font-size: 12px;
+      font-weight: 500;
+      color: #991b1b;
+      background: #fee2e2;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border-left: 3px solid var(--rose);
+    }
+
+    /* Biomarker visual meter */
+    .table-clean {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .table-clean th {
+      background: var(--slate-50);
+      padding: 12px;
+      color: var(--slate-500);
+      font-weight: 600;
+      border-bottom: 1px solid var(--slate-200);
+      text-align: left;
+    }
+    .table-clean td {
+      padding: 12px;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .badge-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .pill-green { background: var(--emerald-light); color: var(--emerald); }
+    .pill-red { background: var(--rose-light); color: var(--rose); }
+    .pill-yellow { background: var(--amber-light); color: var(--amber); }
+
+    /* Doctor Questions list */
+    .q-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--slate-800);
+    }
+
+    .q-number {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Print / Export Bar */
+    .export-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--slate-200);
+      background: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-secondary:hover {
+      background: var(--slate-50);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: var(--slate-400);
+      margin-top: 40px;
+      padding-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <header class="nav">
+    <div class="brand-wrap">
+      <img src="/logo.svg" alt="DeJargon Logo" style="width: 38px; height: 38px; border-radius: 10px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);">
+      <div class="brand-title">DeJargon</div>
+    </div>
+
+    <div class="nav-actions">
+      <div class="pill-status">
+        <span class="status-dot"></span>
+        <span>Clinical Assistant Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <div class="hero-badge">✨ Multi-lingual Medical Interpreter</div>
+      <h1>Understand Your Medical Documents</h1>
+      <p>Instantly decode doctor's handwriting, medication timetables, food interactions, and lab test results into plain everyday language.</p>
+    </div>
+
+    <!-- Intake Card -->
+    <div class="workspace-card">
+      
+      <!-- Category Selector -->
+      <div class="tab-pills" style="grid-template-columns: repeat(4, 1fr);">
+        <button class="tab-btn active" onclick="switchCategory('prescription', this)">
+          📝 Prescription Slip
+        </button>
+        <button class="tab-btn" onclick="switchCategory('medicine_box', this)">
+          💊 Medicine Box / Strip
+        </button>
+        <button class="tab-btn" onclick="switchCategory('bloodwork', this)">
+          🩸 Blood Test & Labs
+        </button>
+        <button class="tab-btn" onclick="switchCategory('discharge', this)">
+          📄 Hospital Summary
+        </button>
+      </div>
+
+      <!-- File Drop Area -->
+      <div class="drop-surface" onclick="document.getElementById('file-input').click()">
+        <div class="drop-icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <div class="drop-title" id="drop-header">Snap photo or select prescription slip</div>
+        <div class="drop-subtitle">Deciphers handwriting, medicine brands, and schedules</div>
+        <input type="file" id="file-input" accept="image/*" onchange="onFileUploaded(this)">
+      </div>
+
+      <div class="file-badge" id="file-status"></div>
+
+      <!-- Text Alternative -->
+      <textarea id="text-notes" placeholder="Or type medicine names, doctor instructions, or report numbers..."></textarea>
+
+      <!-- Language & Options Bar -->
+      <div class="options-bar">
+        <div class="lang-select-wrap">
+          <span>Explain in:</span>
+          <select class="lang-dropdown" id="lang-select">
+            <option value="English">English (Simple 5th Grade)</option>
+            <option value="Hindi">Hindi (हिंदी)</option>
+            <option value="Spanish">Spanish (Español)</option>
+            <option value="French">French (Français)</option>
+            <option value="Arabic">Arabic (العربية)</option>
+          </select>
+        </div>
+
+        <div style="font-size: 13px; color: var(--slate-500);">
+          🔒 Private: Processed in memory only
+        </div>
+      </div>
+
+      <button class="btn-analyze" onclick="processMedicalDoc()">
+        Interpret Medical Document
+      </button>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader-box" id="loader">
+      <div class="spinner"></div>
+      <div style="font-weight: 600; color: var(--slate-800); font-size: 15px;">Deciphering clinical terms & schedule...</div>
+      <div style="font-size: 13px; color: var(--slate-500); margin-top: 4px;">Checking medication safety, food warnings, and doctor handwriting</div>
+    </div>
+
+    <!-- Output Section -->
+    <div id="results-area">
+      
+      <!-- Big Picture Summary Card with Voice Listen -->
+      <div class="result-card">
+        <div class="section-headline">
+          <span>Overview</span>
+          <button class="btn-speech" onclick="speakSummary()">
+            🔊 Listen Out Loud
+          </button>
+        </div>
+        <p id="res-plain-text" style="font-size: 16px; line-height: 1.7; color: var(--slate-700);"></p>
+      </div>
+
+      <!-- Prescribed Medicine Cards Grid -->
+      <div class="result-card" id="prescriptions-card" style="display: none;">
+        <div class="section-headline">
+          <span>Daily Medication Schedule & Safety</span>
+        </div>
+        <div class="meds-grid" id="meds-container"></div>
+      </div>
+
+      <!-- Lab Test Table (if lab work) -->
+      <div class="result-card" id="labs-card" style="display: none;">
+        <div class="section-headline">
+          <span>Lab Biomarkers Breakdown</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="table-clean">
+            <thead>
+              <tr>
+                <th>Biomarker</th>
+                <th>Result</th>
+                <th>Standard Range</th>
+                <th>Condition</th>
+                <th>Plain Explanation</th>
+              </tr>
+            </thead>
+            <tbody id="labs-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Questions to ask Doctor -->
+      <div class="result-card">
+        <div class="section-headline">
+          <span>Recommended Questions for Your Doctor</span>
+        </div>
+        <div id="questions-box"></div>
+      </div>
+
+      <!-- Print / Save Action Bar -->
+      <div class="export-bar">
+        <button class="btn-secondary" onclick="window.print()">
+          🖨️ Print / Save as Patient PDF
+        </button>
+        <button class="btn-secondary" onclick="copyCarePlan()">
+          📋 Copy Summary to Clipboard
+        </button>
+      </div>
+
+    </div>
+
+    <footer>
+      Prototype for educational health communication · Veritas AI Hackathon 2026 · Not medical advice.
+    </footer>
+  </main>
+
+  <script>
+    let activeDocType = "Prescription";
+    let base64Payload = null;
+    let currentSummaryText = "";
+    let currentTargetLang = "English";
+
+    const langCodes = {
+      "English": "en-US",
+      "Hindi": "hi-IN",
+      "Spanish": "es-ES",
+      "French": "fr-FR",
+      "Arabic": "ar-SA"
+    };
+
+    function switchCategory(type, el) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      activeDocType = type;
+      if (type === 'prescription') {
+        document.getElementById('drop-header').innerText = "Snap photo or select prescription slip";
+        document.getElementById('text-notes').placeholder = "Or type doctor's handwritten notes, Rx lines, etc.";
+      } else if (type === 'medicine_box') {
+        document.getElementById('drop-header').innerText = "Snap photo of medicine bottle, box, or blister strip";
+        document.getElementById('text-notes').placeholder = "Or type medicine name printed on the box/strip...";
+      } else if (type === 'bloodwork') {
+        document.getElementById('drop-header').innerText = "Upload blood test or laboratory panel photo";
+        document.getElementById('text-notes').placeholder = "Or type test names and values (e.g. Hemoglobin 10.2)...";
+      } else {
+        document.getElementById('drop-header').innerText = "Upload discharge slip or doctor summary";
+        document.getElementById('text-notes').placeholder = "Or type clinical notes from hospital summary...";
+      }
+    }
+
+    function onFileUploaded(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const badge = document.getElementById('file-status');
+      badge.innerText = "📄 Attached: " + file.name + " (" + Math.round(file.size/1024) + " KB)";
+      badge.style.display = 'block';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        base64Payload = e.target.result.split(',')[1];
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function processMedicalDoc() {
+      const notes = document.getElementById('text-notes').value.trim();
+      currentTargetLang = document.getElementById('lang-select').value;
+
+      if (!notes && !base64Payload) {
+        alert("Please select a document image or enter text.");
+        return;
+      }
+
+      document.getElementById('results-area').style.display = 'none';
+      document.getElementById('loader').style.display = 'block';
+
+      try {
+        const res = await fetch('/api/dejargon', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            report_text: notes,
+            image_b64: base64Payload,
+            language: currentTargetLang,
+            doc_category: activeDocType
+          })
+        });
+
+        const data = await res.json();
+        document.getElementById('loader').style.display = 'none';
+
+        if (data.error) {
+          alert("Error: " + data.error);
+          return;
+        }
+
+        renderDashboard(data);
+
+      } catch (err) {
+        document.getElementById('loader').style.display = 'none';
+        alert("Network error: " + err.message);
+      }
+    }
+
+    let currentAudioElement = null;
+    let audioDataUri = null;
+
+    function renderDashboard(data) {
+      currentSummaryText = data.plain_summary || "";
+      document.getElementById('res-plain-text').innerText = currentSummaryText;
+
+      // Check if server-side studio audio was returned
+      if (data.audio_base64) {
+        audioDataUri = "data:audio/mp3;base64," + data.audio_base64;
+      } else {
+        audioDataUri = null;
+      }
+
+      // Prescriptions Cards
+      const rxCard = document.getElementById('prescriptions-card');
+      const medsContainer = document.getElementById('meds-container');
+      medsContainer.innerHTML = '';
+      if (data.prescriptions && Array.isArray(data.prescriptions) && data.prescriptions.length > 0) {
+        data.prescriptions.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'med-item';
+          div.innerHTML = `
+            <div class="med-header">
+              <span class="med-name">${p.medicine_name || 'Prescribed Drug'}</span>
+              <span class="med-dosage">${p.dosage || '-'}</span>
+            </div>
+            <div class="schedule-tag">⏰ ${p.frequency || 'Follow doctor directions'}</div>
+            <div class="med-purpose"><b>Treats:</b> ${p.purpose || '-'}</div>
+            <div class="med-warning">⚠️ ${p.instructions || 'Take as advised'}</div>
+          `;
+          medsContainer.appendChild(div);
+        });
+        rxCard.style.display = 'block';
+      } else {
+        rxCard.style.display = 'none';
+      }
+
+      // Labs Table
+      const labsCard = document.getElementById('labs-card');
+      const labsTbody = document.getElementById('labs-tbody');
+      labsTbody.innerHTML = '';
+      if (data.biomarkers && Array.isArray(data.biomarkers) && data.biomarkers.length > 0) {
+        data.biomarkers.forEach(b => {
+          const tr = document.createElement('tr');
+          let pill = 'pill-green';
+          const st = (b.status || '').toLowerCase();
+          if (st.includes('high') || st.includes('elevated')) pill = 'pill-red';
+          if (st.includes('low')) pill = 'pill-yellow';
+
+          tr.innerHTML = `
+            <td><b>${b.name || '-'}</b></td>
+            <td>${b.value || '-'}</td>
+            <td style="color:#64748b; font-size:13px;">${b.normal_range || '-'}</td>
+            <td><span class="badge-pill ${pill}">${b.status || 'Normal'}</span></td>
+            <td style="color:#475569; font-size:13px;">${b.explanation || '-'}</td>
+          `;
+          labsTbody.appendChild(tr);
+        });
+        labsCard.style.display = 'block';
+      } else {
+        labsCard.style.display = 'none';
+      }
+
+      // Questions List
+      const qBox = document.getElementById('questions-box');
+      qBox.innerHTML = '';
+      if (data.questions_for_doctor && Array.isArray(data.questions_for_doctor)) {
+        data.questions_for_doctor.forEach((q, idx) => {
+          const div = document.createElement('div');
+          div.className = 'q-item';
+          div.innerHTML = `
+            <div class="q-number">${idx + 1}</div>
+            <div>${q}</div>
+          `;
+          qBox.appendChild(div);
+        });
+      }
+
+      document.getElementById('results-area').style.display = 'block';
+      document.getElementById('results-area').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    let isSpeaking = false;
+
+    function speakSummary() {
+      const btn = document.querySelector('.btn-speech');
+
+      // If already playing audio, stop it
+      if (currentAudioElement && !currentAudioElement.paused) {
+        currentAudioElement.pause();
+        currentAudioElement.currentTime = 0;
+        if (btn) btn.innerHTML = "🔊 Listen Out Loud";
+        return;
+      }
+
+      // 1. Play real server-side MP3 voice (crystal clear Hindi/Spanish/French/English)
+      if (audioDataUri) {
+        currentAudioElement = new Audio(audioDataUri);
+        currentAudioElement.onplay = () => { if (btn) btn.innerHTML = "⏹️ Stop Audio"; };
+        currentAudioElement.onended = () => { if (btn) btn.innerHTML = "🔊 Listen Out Loud"; };
+        currentAudioElement.onerror = () => { if (btn) btn.innerHTML = "🔊 Listen Out Loud"; };
+        currentAudioElement.play().catch(e => console.error("Audio playback error:", e));
+        return;
+      }
+
+      // Fallback: Browser Web Speech API
+      if (!('speechSynthesis' in window)) {
+        alert("Speech is not supported on this browser.");
+        return;
+      }
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (btn) btn.innerHTML = "🔊 Listen Out Loud";
+        return;
+      }
+
+      const ut = new SpeechSynthesisUtterance(currentSummaryText);
+      ut.lang = langCodes[currentTargetLang] || "en-US";
+      ut.onstart = () => { if (btn) btn.innerHTML = "⏹️ Stop Audio"; };
+      ut.onend = () => { if (btn) btn.innerHTML = "🔊 Listen Out Loud"; };
+      window.speechSynthesis.speak(ut);
+    }
+
+    function copyCarePlan() {
+      if (!currentSummaryText) return;
+      navigator.clipboard.writeText(currentSummaryText).then(() => {
+        alert("Summary copied to clipboard!");
+      });
+    }
+  </script>
+</body>
+</html>
